@@ -93,3 +93,4 @@ Contribution entry for 2026-06-26T13:34:55: refactor(core): optimize packet capt
 Contribution entry for 2026-06-26T16:38:50: style(theme): refine cyber terminal color variables
 Contribution entry for 2026-06-26T18:47:44: feat(scanner): improve subnets parsing logic
 Contribution entry for 2026-06-27T17:30:25: feat(wifi): add fallback adapter status checks
+Contribution entry for 2026-06-27T18:15:20: refactor(core): optimize packet capture loop
