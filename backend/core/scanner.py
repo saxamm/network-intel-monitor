@@ -27,7 +27,8 @@ class OUIDatabase:
                         self.mac_map[mac_prefix] = vendor
 
     def get_vendor(self, mac_address):
-        if not mac_address: return "Unknown"
+        if not mac_address:
+            return "Unknown"
         mac_upper = mac_address.upper()
         prefix = mac_upper[:8]
         return self.mac_map.get(prefix, "Unknown")
@@ -35,12 +36,13 @@ class OUIDatabase:
 oui_db = OUIDatabase()
 
 def get_active_subnets():
-    """Finds all active IPv4 subnets across physical interfaces (en*)."""
+    """Finds all active IPv4 subnets across primary network interfaces."""
     subnets = []
+    ignored_prefixes = ('lo', 'docker', 'veth', 'tun', 'tap', 'virbr', 'br-', 'vmnet')
+    
     interfaces = netifaces.interfaces()
     for iface in interfaces:
-        # Only scan standard macOS ethernet/wi-fi interfaces to avoid scanning massive virtual bridges/VPNs
-        if not iface.startswith('en'):
+        if iface.lower().startswith(ignored_prefixes):
             continue
             
         addrs = netifaces.ifaddresses(iface)
@@ -49,16 +51,18 @@ def get_active_subnets():
                 ip = addr.get('addr')
                 netmask = addr.get('netmask')
                 if ip and netmask and ip != '127.0.0.1':
-                    # Calculate CIDR
-                    network = ipaddress.IPv4Network(f"{ip}/{netmask}", strict=False)
-                    subnets.append({
-                        "interface": iface,
-                        "network": str(network)
-                    })
+                    try:
+                        network = ipaddress.IPv4Network(f"{ip}/{netmask}", strict=False)
+                        subnets.append({
+                            "interface": iface,
+                            "network": str(network)
+                        })
+                    except ValueError:
+                        continue
     return subnets
 
 def get_mdns_hostnames(timeout=3):
-    """Passively collects hostnames via mDNS/Zeroconf for a few seconds."""
+    """Collects hostnames via mDNS/Zeroconf."""
     hostnames = {}
     zeroconf = Zeroconf()
     
@@ -70,11 +74,9 @@ def get_mdns_hostnames(timeout=3):
             if info:
                 for addr in info.parsed_addresses():
                     if addr not in hostnames:
-                        # Extract a clean hostname (e.g. "MacBook Pro._airplay._tcp.local." -> "MacBook Pro")
                         clean_name = name.split('.')[0]
                         hostnames[addr] = clean_name
                         
-    # Browse for common services
     browser = ServiceBrowser(zeroconf, ["_http._tcp.local.", "_airplay._tcp.local.", "_googlecast._tcp.local.", "_smb._tcp.local.", "_printer._tcp.local."], Listener())
     time.sleep(timeout)
     zeroconf.close()
@@ -82,27 +84,23 @@ def get_mdns_hostnames(timeout=3):
 
 def scan_network_advanced(deep_scan=False):
     """
-    Uses python-nmap to scan all active subnets.
-    If deep_scan is True, it attempts OS fingerprinting and service detection (slower, requires sudo).
+    Scans active local subnets with Nmap.
+    If deep_scan is True, attempts OS fingerprinting and service detection.
     """
     nm = nmap.PortScanner()
     devices = []
     subnets = get_active_subnets()
     
-    # Pre-fetch mDNS hostnames
     mdns_hosts = get_mdns_hostnames(timeout=2)
     
     for subnet in subnets:
         target = subnet["network"]
-        # Basic ping scan (fast)
         scan_args = "-sn --min-rate 300"
         
-        # Deep scan (-O for OS detection, -sV for service version, -F for fast top 100 ports, speed flags)
         if deep_scan:
             scan_args = "-O -sV -F --host-timeout 1m --max-retries 0 --min-rate 300"
 
         try:
-            # Removed sudo=True as backend is already running as root
             nm.scan(hosts=target, arguments=scan_args) 
             
             for host in nm.all_hosts():
@@ -134,6 +132,6 @@ def scan_network_advanced(deep_scan=False):
                         "interface": subnet["interface"]
                     })
         except Exception as e:
-            print(f"Nmap scan failed on {target}: {e}")
+            print(f"Nmap scan error on {target}: {e}")
             
     return devices

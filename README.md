@@ -1,25 +1,23 @@
 # 📡 Network Intelligence Monitor
 
-A real-time network intelligence and packet monitoring desktop interface built with a **FastAPI** backend and a **React (Vite) + Framer Motion** hacker-terminal frontend.
-
-![Hacker Terminal Dashboard UI](https://raw.githubusercontent.com/placeholder/demo.png)
+A real-time network intelligence and packet monitoring desktop dashboard built with a **FastAPI** backend and a **React (Vite) + Framer Motion** cyberpunk terminal frontend.
 
 ---
 
 ## ⚡ Features
 
-- 🟢 **Hacker Terminal UI:** Neon phosphor-green cyber aesthetic with CRT scanlines, live metrics, protocol distributions, and expanding pulse animations.
-- 📡 **Mac-Native Wi-Fi Signal Radar:** Direct integration with macOS CoreWLAN (`pyobjc`) to display real-time nearby BSSIDs, SSIDs, channels, and RSSI levels.
-- 🔍 **Active Nmap & mDNS Device Scanning:** Auto-discovers local network devices (IP, MAC, hostname, OS matching, open ports) with custom device category visualizers (Router, Phone, PC, TV, IoT).
-- 🛡️ **Live Packet Capture & Alert Engine:** Uses Scapy & WebSockets to monitor real-time traffic protocols (TCP, UDP, ICMP, DNS) and emit security alerts (e.g., Telnet unencrypted data detection).
-- 🖱️ **Interactive Block Modals:** Clickable interface elements that expand into full-screen animated detail views.
+- 🟢 **Cyber Terminal UI:** Neon phosphor-green cyber aesthetic with CRT scanlines, live metrics, protocol distributions, and animated radar sweeps.
+- 📡 **Multi-Platform Wi-Fi Signal Radar:** Displays real-time nearby BSSIDs, SSIDs, channels, and RSSI signal levels (supports macOS CoreWLAN, Linux `nmcli`, and Windows `netsh`).
+- 🔍 **Active Nmap & mDNS Device Discovery:** Auto-discovers local network devices (IP, MAC, hostname, OS fingerprinting, open ports) with custom device categorization (Router, Phone, PC, TV, IoT).
+- 🛡️ **Live Packet Capture & Alert Engine:** Utilizes Scapy & WebSockets to monitor real-time traffic protocols (TCP, UDP, ICMP, DNS) and emit security alerts for unencrypted or suspicious traffic.
+- 🖱️ **Interactive Block Inspection:** Clickable UI components expand into full-screen detailed analysis modals.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Backend:** Python 3.9+, FastAPI, Scapy, PyObjC (CoreWLAN), python-nmap, SQLAlchemy (SQLite), WebSockets.
-- **Frontend:** React 18, Vite, Framer Motion, Recharts, Lucide React, CSS Variables (Phosphor Cyberpunk System).
+- **Backend:** Python 3.9+, FastAPI, Scapy, python-nmap, SQLAlchemy (SQLite), WebSockets.
+- **Frontend:** React 18, Vite, Framer Motion, Recharts, Lucide React.
 
 ---
 
@@ -27,9 +25,8 @@ A real-time network intelligence and packet monitoring desktop interface built w
 
 ### Prerequisites
 
-- **macOS** (for CoreWLAN Wi-Fi scanning support)
 - **Python 3.9+** & **Node.js 18+**
-- **Nmap** installed on system (`brew install nmap`)
+- **Nmap** installed on system (`brew install nmap` on macOS or `sudo apt install nmap` on Linux)
 
 ### 1. Setup Backend
 
@@ -49,7 +46,7 @@ npm install
 
 ### 3. Launch Application
 
-From the root project directory, run the startup script:
+From the project root directory, execute:
 
 ```bash
 ./run.sh
@@ -58,10 +55,10 @@ From the root project directory, run the startup script:
 - **Dashboard UI:** `http://localhost:5173`
 - **Backend API:** `http://localhost:8000`
 
-> ⚠️ **Note:** Packet capture via Scapy requires administrator (`sudo`) privileges on macOS. `run.sh` will prompt for your local password to start the backend observer thread.
+> ⚠️ **Note:** Low-level packet capture via Scapy requires administrator (`sudo`) privileges.
 
 ---
 
 ## 📄 License
 
-MIT License. Free to use and extend!
+MIT License. Free to use and extend.

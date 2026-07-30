@@ -15,7 +15,7 @@ if [ ! -d "venv" ]; then
     exit 1
 fi
 
-echo "[!] Note: Sudo is required for Scapy packet capturing on macOS."
+echo "[!] Note: Administrator privileges (sudo) are required for low-level packet capture."
 sudo venv/bin/python main.py &
 BACKEND_PID=$!
 
